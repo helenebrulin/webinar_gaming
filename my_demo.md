@@ -11,21 +11,44 @@
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
-./gen_user_profiles.csv
 ```
+
+## Send user file to gcloud instance
+gcloud compute scp pop_users.csv --zone "europe-west1-b" "helene-gaming":~
+sudo mv pop_users.csv /root
+
+## Install go
+```sh
+wget https://dl.google.com/go/go1.16.4.linux-amd64.tar.gz 
+sudo tar -xvf go1.16.4.linux-amd64.tar.gz   
+sudo mv go /usr/local 
+
+#for all sessions
+export GOROOT=/usr/local/go 
+export GOPATH=/root
+export PATH=$GOPATH/bin:$GOROOT/bin:$PATH 
+```
+
 
 ## Load data
 
 ```sh
 cd loads
 ./load_cities.py
-./load_user_profiles0.py ../users.csv # for grafana part
+./load_user_profiles0.py ../pop_users.csv # for grafana part
 ./load_user_profiles.py # for search part
 ```
 
 -------
 
 ## Configure Grafana
+https://www.linuxfordevices.com/tutorials/ubuntu/install-grafana-on-ubuntu-debian
+grafana-cli redis plugin
+sudo systemctl start grafana-server
+sudo systemctl enable grafana-server
+open tcp port 3000 in vpc as well as in doc above
+
+
 
 - Locally, go to grafana folder and run docker-compose
 ```sh
@@ -43,11 +66,11 @@ terraform apply
 - In venv environment on machine :
 ```sh
 go run stats.go 
-go run loader.go -f pop_users.csv
+go run loader.go -f ../users.csv
 ```
 ## Load fake KPIs
 pip install redistimeseries # add this to requirements
-./gen_game_metrics 
+./gen_game_metrics.py
 
 # SETUP DONE
 

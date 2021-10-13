@@ -1,0 +1,9 @@
+click==8.0.1
+Faker==8.5.1
+hiredis==2.0.0
+python-dateutil==2.8.1
+redis==3.5.3
+redisearch==2.0.0
+rmtest==0.7.0
+six==1.16.0
+text-unidecode==1.3

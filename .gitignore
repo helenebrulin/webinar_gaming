@@ -1,0 +1,8 @@
+*.pdf
+*.pptx
+venv/*
+*.redis
+terraform/*tfstate*
+terraform/.terraform
+terraform/.terraform.lock.hcl
+pop_users.csv

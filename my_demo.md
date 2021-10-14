@@ -3,7 +3,7 @@
 ## Start instances
 
 - Start machines, create db with search and timeseries. Only one shard.
-- Git clone this in fourth machine and change endpints to private.
+- Git clone this in fourth machine.
 
 ## Setup venv on each terminal
 
@@ -13,7 +13,7 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-## Send user file to gcloud instance
+## Send pop_users file to gcloud instance
 gcloud compute scp pop_users.csv --zone "europe-west1-b" "helene-gaming":~
 sudo mv pop_users.csv /root
 
@@ -29,31 +29,18 @@ export GOPATH=/root
 export PATH=$GOPATH/bin:$GOROOT/bin:$PATH 
 ```
 
-
-## Load data
-
-```sh
-cd loads
-./load_cities.py
-./load_user_profiles0.py ../pop_users.csv # for grafana part
-go run loader.go -f ../pop_users.csv
-```
-
 -------
 
-## Configure Grafana
+## Install Configure Grafana
 https://www.linuxfordevices.com/tutorials/ubuntu/install-grafana-on-ubuntu-debian
 grafana-cli redis plugin
 sudo systemctl start grafana-server
 sudo systemctl enable grafana-server
 open tcp port 3000 in vpc as well as in doc above
 
-
 install terraform : https://www.decodingdevops.com/how-to-install-terraform-on-ubuntu-18-04-server/ 
 https://www.terraform.io/downloads.html
 
-
-- Locally, go to grafana folder and run docker-compose
 ```sh
 cd terraform
 terraform init
@@ -63,7 +50,18 @@ terraform apply
 
 ## Configure RedisInsight
 - use helene-eu-cluster.demo.redislabs.com + port 9443!!
+
+
 ----------
+
+## Load data
+
+```sh
+cd loads
+./load_cities.py
+./load_user_profiles0.py ../pop_users.csv # for grafana part
+go run loader.go -f ../pop_users.csv #sends tickets to matchmaking engine.
+```
 
 ## Load fake KPIs (do not do it during demo)
 pip install redistimeseries # add this to requirements
@@ -71,7 +69,9 @@ pip install redistimeseries # add this to requirements
 
 # SETUP DONE
 
-# Show Grafana KPI board
+--------
+
+# Show Grafana KPI board (NO)
 - Open KPIs board
 - We have 4 million users, populated over a year. This is a Grafan integration with Redis Time Series. 
 - We see revenue per users here
@@ -100,7 +100,7 @@ And right is total nb of matches.
 
 # PART 2
 
-## Setup
+## Streams
 - open redis Insight click on Streams. 
 - This is our backfill
 - As users are coming and we’re matching them out so different streams. 

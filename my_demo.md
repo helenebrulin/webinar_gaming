@@ -2,7 +2,7 @@
 
 ## Start instances
 
-- Start machines, create db with search and timeseries.
+- Start machines, create db with search and timeseries. Only one shard.
 - Git clone this in fourth machine and change endpints to private.
 
 ## Setup venv on each terminal

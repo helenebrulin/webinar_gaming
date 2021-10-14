@@ -169,6 +169,7 @@ func main() {
 
 						if *verbose {
 							log.Printf("Grouped!! %+v\n", group)
+							log.Printf("pop %+v\n", vals[0])
 						}
 						// Send match to backfill service
 						redisClient.XAdd(ctx, &redis.XAddArgs{

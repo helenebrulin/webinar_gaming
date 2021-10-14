@@ -60,6 +60,7 @@ terraform apply
 cd loads
 ./load_cities.py
 ./load_user_profiles0.py ../pop_users.csv # for grafana part
+go run stats.go #metrics engine listening to matches
 go run loader.go -f ../pop_users.csv #sends tickets to matchmaking engine.
 ```
 

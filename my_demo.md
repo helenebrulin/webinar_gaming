@@ -102,8 +102,8 @@ And right is total nb of matches.
 # PART 2
 
 ## Streams
-- open redis Insight click on Streams. 
-- This is our backfill
+- open redis Insight click on Streams. (CLICK ON SCAN BELOW TO GET SOME KEYS)
+- This is our backfill, our queue sent to pop servers.
 - As users are coming and we’re matching them out so different streams. 
 Those are the messages that come in. 
 So on our ?? server or point of presence, we have this request coming, with the user names. These are updating in real time as we’re doing the backfill as that last step in matching process.

@@ -60,8 +60,8 @@ terraform apply
 cd loads
 ./load_cities.py
 ./load_user_profiles0.py ../pop_users.csv # for grafana part
-go run stats.go #metrics engine listening to matches
-go run loader.go -f ../pop_users.csv #sends tickets to matchmaking engine.
+go run stats.go #metrics engine listening to matches. WHEN STARTING DEMO!!
+go run loader.go -f ../pop_users.csv #sends tickets to matchmaking engine. WHEN STARTING DEMO
 ```
 
 ## Load fake KPIs (do not do it during demo)
@@ -72,6 +72,23 @@ pip install redistimeseries # add this to requirements
 
 --------
 
+# Leaderboards 
+
+- Have several windows open.
+- Create my leaderboard live with cli and check top 5
+
+```sh
+ZADD ldboard 1 vassilis 2 rahul 3 thomas 4 quinton 5 theodor 6 guy 7 rakhilaa 8 bob 9 ben 10 bill
+ZREVRANGE ldboard 0 -1 WITHSCORES
+ZREVRANGE ldboard 0 4
+```
+
+- script where people start playing and see the increments on one side.
+Show the code in window above.
+
+- Do a script which displays top 5 every 10 seconds. 
+
+
 # Show Grafana KPI board (NO)
 - Open KPIs board
 - We have 4 million users, populated over a year. This is a Grafan integration with Redis Time Series. 
@@ -81,21 +98,17 @@ pip install redistimeseries # add this to requirements
 - We have load times, which is critical. 10s and we see a drop when we switched over to redis. 
 - zoom in and get closer look
 
-# Show matchmaking
+# Show 4K users in Insight
 
+# Show matchmaking
 - We will start matchmaking now in real time
 
 ```sh
 cd matchmaking &&  go run matchmaker.go
 ```
 
-- Left : Matching in real time. We have our leaderboards. Lead by PoP, you can see that most people are closest to Auckland. You see that real time  as matches occur. 
 
-- Middle : We have our group leaders so you can see which people in which groups are matching the quickest.
-
-- Right : And we’re modifying the scores of the players in real time.
-
-And at the bottom : matches in real time. We're matcting around 15 a second - BAD PERFORMANCE ???
+matches in real time. We're matcting around xx a second 
 And right is total nb of matches. 
 
 
@@ -109,7 +122,7 @@ Those are the messages that come in.
 So on our ?? server or point of presence, we have this request coming, with the user names. These are updating in real time as we’re doing the backfill as that last step in matching process.
 
 
-# PART 3
+# PART 3 - DO NOT DO
 
 - Now let's stop the matching algorithm and look at how you implement one in detail.
 
@@ -129,7 +142,9 @@ We limit the search to 4 results and we're just going to return these 3 fields p
 
 - we're going to search through everything and return a 4 user names, mmrs and pops.
 See that we've got Pamela, Connor, ... and James.
-MMRs are pretty diverse, so they are all over the board.
+
+
+- MMRs are pretty diverse, so they are all over the board.
 The PoPs as well. Terrible for network latencies. So limit those to a single point of presence : Tokyo. 
 
 ```sh
@@ -154,8 +169,9 @@ Here we also want to return the group tags as well when displaying our results, 
 - We see that we have two reslults in darkgrey-posse, so maybe we want to add an optional search for this group, so that users in that group would rank first in this matchmaking process.
 
 ```sh
-FT.SEARCH MatchMaker-idx "@pop:Tokyo @mmr:[2731 2872] -@user:(loganderek|mybrother) ~@group_tags:{darkgray_posse}" LIMIT 0 4 RETURN 3 username mmr group_tags
+FT.SEARCH MatchMaker-idx "@pop:Tokyo @mmr:[2731 2872] -@user:(loganderek|mybrother) ~@group_tags:{darkgray_posse}" LIMIT 0 4 RETURN 3 username mmr group_tags 
 ```
+
 
 - now we see one of the players that was there before but was not in darkgray-posse is not here anymore, and our first top three results are in that group. So all of the members in that group are here now.
 
@@ -168,17 +184,20 @@ FT.SEARCH MatchMaker-idx "@pop:Tokyo @mmr:[2731 2872] -@user:(loganderek|mybroth
 - You can play with individual weights dynamically as well for those optional searcges
 
 ```sh
-FT.SEARCH MatchMaker-idx "@pop:Tokyo @mmr:[2731 2872] -@user:(loganderek|mybrother) ~@group_tags:{darkgray_posse} => { $weight: 30.0} ~@secondary_group_tags:{darkgoldenrod_squad} => {$weight: 100.0}" LIMIT 0 4 WITHSCORES RETURN 4 username  group_tags secondary_group_tags play_style_tags
+# do it according to what results come up
+FT.SEARCH MatchMaker-idx "@pop:Tokyo @mmr:[2731 2872] -@user:(loganderek|mybrother) ~@group_tags:{darkgray_posse} => { $weight: 30.0} ~@secondary_group_tags:{forestgreen_band} => {$weight: 100.0}" LIMIT 0 4 WITHSCORES RETURN 4 username  group_tags secondary_group_tags play_style_tags
 ```
 
 - Here we can weight the first group tag lower than the secondary one, and put the secondary one as darkgoldenrod_squad. And we see that the top result is now not in darkgray_posse since secondary group tag is weighted more than the primary group tag. 
-- WITHSCORES will give us the score also for all the results
-  
+- 
+- WITHSCORES will give us the score also for all the results !!!!!!
 
+
+DO NOT DO THIS
 - We can also run this EXPLAINSCORE command with our matching : 
 
 ```sh
-FT.SEARCH MatchMaker-idx "@pop:Tokyo @mmr:[2731 2872] -@user:(loganderek|mybrother) ~@group_tags:{darkgray_posse} => { $weight: 30.0} ~@secondary_group_tags:{darkgoldenrod_squad} => {$weight: 100.0}" LIMIT 0 1 WITHSCORES EXPLAINSCORE RETURN 1 username 
+FT.SEARCH MatchMaker-idx "@pop:Tokyo @mmr:[2731 2872] -@user:(loganderek|mybrother) ~@group_tags:{darkgray_posse} => { $weight: 30.0} ~@secondary_group_tags:{forestgreen_band} => {$weight: 100.0}" LIMIT 0 1 WITHSCORES EXPLAINSCORE RETURN 1 username 
 ```
 
 - So here i'm just showing the top results with only the username, and i'm showing the output of EXPLAINSCORE.
@@ -187,6 +206,8 @@ FT.SEARCH MatchMaker-idx "@pop:Tokyo @mmr:[2731 2872] -@user:(loganderek|mybroth
 TFIDF : term frequency–inverse document frequency, it is a numerical statistic that is intended to reflect how important a word is to a document in a collection or corpus
 
 
+
+ DO NOT DO THIS
 - And finally, let's do a geo search to find the closest PoP
 ```sh
  FT.AGGREGATE cities '*' LOAD 2 location city APPLY "geodistance(@location, -122.4475743, 37.7722695)" as dist SORTBY 2 @dist ASC LIMIT 0 1

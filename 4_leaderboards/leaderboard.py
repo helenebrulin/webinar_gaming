@@ -13,10 +13,7 @@ def get_top():
     print('\n')
     top = client.zrevrange("ldboard", 0, 4)
     for idx, player in enumerate(top):
-        print(idx + 1, ' - ', player, '\n')
-
-
-    print(top)
+        print(idx + 1, ' - ', player)
 
 
 get_top()

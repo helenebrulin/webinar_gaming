@@ -12,6 +12,10 @@ def get_top():
     threading.Timer(1.0, get_top).start()
     print('\n')
     top = client.zrevrange("ldboard", 0, 4)
+    for idx, player in top:
+        print(idx + 1, '-', player)
+
+
     print(top)
 
 

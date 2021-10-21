@@ -15,6 +15,6 @@ with open(load_file, newline='') as csvfile:
     reader = csv.DictReader(csvfile)
     row_count = 0
     for row in reader:
-        client.zincrby("ldboard", row['player'], row['score'])
+        client.zincrby("ldboard", row['score'], row['player'])
         print(row['player'], ": +", row['score'])
         row_count += 1

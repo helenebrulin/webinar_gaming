@@ -12,9 +12,8 @@ def get_top():
     threading.Timer(1.0, get_top).start()
     print('\n')
     top = client.zrevrange("ldboard", 0, 4, withscores=True)
-    print(top)
     for idx, player in enumerate(top):
-        print(idx + 1, ' - ', player)
+        print(idx + 1, ' - ', player[3:])
 
 
 get_top()

@@ -10,17 +10,6 @@ client = redis.Redis(host="redis-12000.internal.helene-eu-cluster.demo.redislabs
 
 list = ['vassilis', 'rahul', 'thomas', 'quinton', 'theodor', 'guy', 'rakhilaa', 'bill', 'ben', 'bob']
 
-#load_file = 'scores.csv'
-
-#with open(load_file, newline='') as csvfile:
-#    reader = csv.DictReader(csvfile)
-#    row_count = 0
-#    for row in reader:
-#        client.zincrby("ldboard", row['score'], row['player'])
-#        print(row['player'], ": +", row['score'])
-#        row_count += 1
-
-
 
 value = True
 while (value):

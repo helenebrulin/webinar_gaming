@@ -104,17 +104,17 @@ Show the code in window above.
 - We will start matchmaking now in real time
 
 ```sh
-cd matchmaking &&  go run matchmaker.go
+go run matchmaker.go --verbose
 ```
 
 
 matches in real time. We're matcting around xx a second 
 And right is total nb of matches. 
 
+Show latency in redis enterprise. 
 
-# PART 2
 
-## Streams
+# Streams
 - open redis Insight click on Streams. (CLICK ON SCAN BELOW TO GET SOME KEYS)
 - This is our backfill, our queue sent to pop servers.
 - As users are coming and we’re matching them out so different streams. 
@@ -122,7 +122,7 @@ Those are the messages that come in.
 So on our ?? server or point of presence, we have this request coming, with the user names. These are updating in real time as we’re doing the backfill as that last step in matching process.
 
 
-# PART 3 - DO NOT DO
+# RediSearch- DO NOT DO
 
 - Now let's stop the matching algorithm and look at how you implement one in detail.
 
